@@ -1,5 +1,83 @@
 {% extends 'base.html' %}
 
 {% block gameContent %}
-    <h1>Hello, game!</h1>
+    <p id = game
+       style="text-align:center"> {{game_state | safe}}
+    </p>
+
+    <p id = winner>
+
+    </p>
+
+
+    <form>
+      <div class="form-group" >
+        <label for="rowinput">Row</label>
+        <select class="form-control" id="rowinput">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+
+      <div class="form-group" >
+        <label for="colinput">Column</label>
+        <select class="form-control" id="colinput">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+
+      <div class="form-group" >
+        <label for="markinput">Mark</label>
+        <select class="form-control" id="markinput">
+          <option>X</option>
+          <option>O</option>
+        </select>
+      </div>
+
+      <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" id="reset" class="btn btn-primary">Reset</button>
+    </form>
+
+    <script>
+        $('#submit').on('click', function (event) {
+            event.preventDefault();
+            socket.emit('game_input', {row: parseInt($('#rowinput').val(), 10),
+                                       col: parseInt($('#colinput').val(), 10),
+                                       mark: $('#markinput').val()}
+            );
+        });
+
+        $('#reset').on('click', function (event) {
+            event.preventDefault();
+            socket.emit('reset');
+        });
+    </script>
+
+    <script>
+        socket.on('game_change', function(msg) {
+            $('#game').html(msg.data);
+        });
+    </script>
+
+    <script>
+        socket.on('show_winner', function(msg) {
+            if (msg.data == "T") {
+                $('#winner').html('Tie!');
+            }
+            else{
+                $('#winner').html('Player ' + msg.data + ' won!');
+            }
+
+        });
+    </script>
+
+    <script>
+        socket.on('hide_winner', function(msg) {
+            $('#winner').html('');
+        });
+    </script>
+
 {% endblock %}

@@ -1,13 +1,14 @@
-class tictactoegame:
+import numpy as np
+
+class tttgame:
 
     rows = cols = 3
-    board = None
 
     def __init__(self):
-        self.board = [['-'] * self.cols] * self.rows
+        self.board = np.full((3,3), '-')
 
     def clear_board(self):
-        self.board = [['-'] * self.cols] * self.rows
+        self.board.fill('-')
 
     def mark_board(self, row, col, fill_element):
         self.board[row][col] = fill_element
@@ -25,24 +26,23 @@ class tictactoegame:
             col_win = all(ele == col[0] and ele != '-' for ele in col)
 
             if col_win:
-                return True, row[0]
+                return True, col[0]
 
         if self.diag_checks():
             return True, self.board[1][1]
 
         for row in self.board:
             for element in row:
-                if element != "-":
-                    count += 1
+                if element == "-":
+                    return False, ''
 
-        if count > 0:
-            return False, ''
+        return True, 'T'
 
     def diag_checks(self):
         if self.board[1][1] != '-':
             count1 = 0
             count2 = 0
-            for idx in range(len(self.rows)):
+            for idx in range(self.rows):
                 if self.board[idx][idx] != self.board[1][1]:
                     count1 += 1
 
@@ -53,10 +53,11 @@ class tictactoegame:
         else:
             return False
 
-    def __str__(self):
+    def to_string(self):
         row1 = self.board[0][0] + ' | ' + self.board[0][1] + ' | ' +  self.board[0][2] + '\n'
         row2 = self.board[1][0] + ' | ' + self.board[1][1] + ' | ' + self.board[1][2] + '\n'
         row3 = self.board[2][0] + ' | ' + self.board[2][1] + ' | ' + self.board[2][2] + '\n'
         spaces = '_________\n'
         representation = row1 + spaces + row2 + spaces + row3
+
         return representation

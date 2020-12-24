@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block gameContent %}
+    <form id = "game_select_form" action="{{url_for('route_blueprint.game_select')}}" method="post">
+      <div class="form-group" >
+        <label for="game_room_id">Which game room would you like to join?</label>
+        <select class="form-control" id="game_room_id" name="game_room_id" form = "game_select_form">
+          {% for x in range(1, num_games+1) %}
+          <option value="{{x}}">{{x}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" id="submit" class="btn btn-primary" >Join</button>
+    </form>
+{% endblock %}

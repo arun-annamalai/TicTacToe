@@ -1,12 +1,19 @@
 {% extends 'base.html' %}
 
 {% block gameContent %}
+    <script type="text/javascript" charset="utf-8">
+        socket.emit('join', {game_room_id: "{{game_room_id}}" });
+    </script>
+
+    <form id = "game_select_form" action="{{url_for('route_blueprint.game', game_room_id = 1)}}" method="post">
+        <button type="submit" id="back" class="btn btn-primary">Back to game select</button>
+    </form>
+
     <p id = game
        style="text-align:center"> {{game_state | safe}}
     </p>
 
     <p id = winner>
-
     </p>
 
 
@@ -54,15 +61,19 @@
             event.preventDefault();
             socket.emit('reset');
         });
+
+        $('#back').on('click', function (event) {
+            socket.emit('leave', {game_room_id: {{game_room_id}} });
+        });
+
     </script>
 
     <script>
         socket.on('game_change', function(msg) {
             $('#game').html(msg.data);
+            console.log("hello1234")
         });
-    </script>
 
-    <script>
         socket.on('show_winner', function(msg) {
             if (msg.data == "T") {
                 $('#winner').html('Tie!');
@@ -72,9 +83,7 @@
             }
 
         });
-    </script>
 
-    <script>
         socket.on('hide_winner', function(msg) {
             $('#winner').html('');
         });

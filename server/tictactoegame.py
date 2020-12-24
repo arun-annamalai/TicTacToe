@@ -1,17 +1,37 @@
 import numpy as np
+from sqlalchemy.ext.mutable import Mutable
 
-class tttgame:
+class MutableObject(Mutable, object):
+    @classmethod
+    def coerce(cls, key, value):
+        return value
 
-    rows = cols = 3
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        d.pop('_parents', None)
+        return d
 
+    def __setstate__(self, state):
+        self.__dict__ = state
+
+    def __setattr__(self, name, value):
+        object.__setattr__(self, name, value)
+        self.changed()
+
+class TicTacToe(MutableObject):
     def __init__(self):
+        super(MutableObject, self).__init__()
         self.board = np.full((3,3), '-')
+        self.rows = 3
+        self.cols = 3
 
     def clear_board(self):
         self.board.fill('-')
+        self.changed()
 
     def mark_board(self, row, col, fill_element):
         self.board[row][col] = fill_element
+        self.changed()
 
     def check_game_over(self):
         count = 0
@@ -53,8 +73,8 @@ class tttgame:
         else:
             return False
 
-    def to_string(self):
-        row1 = self.board[0][0] + ' | ' + self.board[0][1] + ' | ' +  self.board[0][2] + '\n'
+    def pretty_print(self):
+        row1 = self.board[0][0] + ' | ' + self.board[0][1] + ' | ' + self.board[0][2] + '\n'
         row2 = self.board[1][0] + ' | ' + self.board[1][1] + ' | ' + self.board[1][2] + '\n'
         row3 = self.board[2][0] + ' | ' + self.board[2][1] + ' | ' + self.board[2][2] + '\n'
         spaces = '_________\n'
